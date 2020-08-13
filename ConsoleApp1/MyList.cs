@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace ConsoleApp1
@@ -7,16 +8,19 @@ namespace ConsoleApp1
     class MyList
     {
 
-        const string TASK_CREATE = "1";
-        const string TASK_VIEW_ALL = "2";
-        const string TASK_UPDATE = "3";
-        const string TASK_DELETE = "4";
+        const string TASK_CREATE    = "1";
+        const string TASK_VIEW_ALL  = "2";
+        const string TASK_UPDATE    = "3";
+        const string TASK_DELETE    = "4";
+
+        const string LIST_SAVE_PATH = "./todo_list.txt";
 
         static List<string> todo_list = new List<string>();
 
 
         public static void Main(string[] args)
         {
+            todo_list = getList();
 
             Console.WriteLine("==== My To do list program ===== ");
 
@@ -35,6 +39,8 @@ namespace ConsoleApp1
 
         public static void showMenu()
         {
+            saveList(todo_list);
+
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("MAIN MENU");
@@ -66,6 +72,9 @@ namespace ConsoleApp1
                     showMenu();
                     break;
             }
+            
+
+
         }
 
 
@@ -136,6 +145,38 @@ namespace ConsoleApp1
             showMenu();
         }
 
+
+
+        public static void saveList(List<string> todo_list)
+        {
+            StreamWriter sw = File.CreateText(LIST_SAVE_PATH);
+            foreach (string task in todo_list)
+            {
+                sw.WriteLine(task);
+            }
+
+            sw.Close();
+        }
+
+        public static List<string> getList()
+        {
+            if (!File.Exists(LIST_SAVE_PATH))
+            {
+                File.Create(LIST_SAVE_PATH).Close();
+            }
+
+            List<string> todo_list = new List<string>();
+            StreamReader sr = File.OpenText(LIST_SAVE_PATH);
+            string task;
+            while ((task = sr.ReadLine()) != null)
+            {
+                todo_list.Add(task);
+            }
+
+            sr.Close();
+
+            return todo_list;
+        }
 
 
     }
